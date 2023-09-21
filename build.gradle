@@ -51,7 +51,7 @@ tasks.named('test') {
 gradlePlugin {
     // Define the plugin
     plugins {
-        SimplePlugin {
+        Simple {
             id = 'com.ncr.plugins.simple'
             implementationClass = 'com.ncr.plugins.SimplePlugin'
 		}
