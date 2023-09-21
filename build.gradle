@@ -92,8 +92,7 @@ artifactory {
         defaults {
             publications('SimplePluginMarkerMaven',"buildMaven")
             publishBuildInfo = false
-            publishArtifacts = true
-            publishPom = true
+
         }
     }
     resolve {
