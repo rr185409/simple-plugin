@@ -12,7 +12,7 @@ public class SimpleOperationsTask extends DefaultTask {
 	}
 	@TaskAction
 	public void getProjectName() {
-
+		System.out.println("Project Name: " + getProject().getName());
 		logger.info("Project Name: " + getProject().getName());
 
 	}
