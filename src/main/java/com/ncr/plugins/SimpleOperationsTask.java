@@ -14,8 +14,8 @@ public class SimpleOperationsTask extends DefaultTask {
 	public void getProjectName() {
 		System.out.println("Project Name: " + getProject().getName());
 		logger.info("Project Name: " + getProject().getName());
-		getProject().getDependencies().add("implementation","com.ncr.Tools:Forms:1.1.0");
 
 	}
+	
 
 }
