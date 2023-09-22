@@ -107,24 +107,9 @@ artifactory {
     
 }
 publishing {
-        publications {
-            buildMaven(MavenPublication) {
-                from components.java
-            }
-            
-            
-            
-           
-        }
-    }
-  
-
-abstract class GreetingTask extends DefaultTask {
-    @TaskAction
-    def greet() {
-        println 'hello from GreetingTask'
-    }
+	publications {
+    	buildMaven(MavenPublication) {
+        	from components.java
+		} 
+	}
 }
-
-// Create a task using the task type
-tasks.register('hello', GreetingTask)
