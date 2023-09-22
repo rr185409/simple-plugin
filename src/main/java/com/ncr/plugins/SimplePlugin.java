@@ -13,7 +13,6 @@ public class SimplePlugin implements Plugin<Project> {
 	public void apply(Project project) {
 		System.out.println("apply");
 		project.getTasks().register("projectName", SimpleOperationsTask.class);
-		project.getDependencies().add("implementation","com.ncr.Tools:Forms:1.2.0");
 	}
 
 }
