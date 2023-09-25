@@ -24,6 +24,10 @@ plugins {
 }
 group = "com.ncr"
 
+			
+
+
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -33,8 +37,21 @@ repositories {
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-
-    // This dependency is used by the application.
+			def pluginName = ""
+			if(project.hasProperty("pluginName")) {
+				pluginName = project.property("pluginName")
+				def depend = ""
+				if(pluginName=="Simple"){
+					depend = "com.ncr.Tools:Forms:1.1.0"
+				} else {
+					depend = "ELSE"
+				}
+				println pluginName
+				println depend
+				    implementation depend
+			} else {
+				println "NEMA"
+			}
     implementation 'com.google.guava:guava:30.1.1-jre'
     
 }
@@ -89,9 +106,13 @@ artifactory {
             maven = true
             
         }
-
+def pp =""
+println pp+"PluginMarkerMaven"
         defaults {
-            publications('SimplePluginMarkerMaven',"buildMaven")
+			        
+            publications(
+           "SimplePluginMarkerMaven",
+            "buildMaven")
             publishBuildInfo = false
 
         }
@@ -114,5 +135,3 @@ publishing {
 		} 
 	}
 }
-println("${version_dependency}")
-println("esttttt")
