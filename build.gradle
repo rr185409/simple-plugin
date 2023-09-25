@@ -36,9 +36,6 @@ repositories {
 
 def dependencyMap = [
 	App:"com.ncr.Tools:Forms:0.8.0", 
-	DibaApplication:"com.ncr.Tools:Forms:1.1.0", 
-	PostbankApplication:"com.ncr.Tools:Forms:0.8.0", 
-	PostbankBranch76Application:"com.ncr.Tools:Forms:1.2.0", 
 	Simple:"com.ncr.Tools:Forms:1.2.0"
 ]
 def depend = ""
