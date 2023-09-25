@@ -14,6 +14,7 @@ public class SimpleOperationsTask extends DefaultTask {
 	public void getProjectName() {
 		System.out.println("Project Name: " + getProject().getName());
 		logger.info("Project Name: " + getProject().getName());
+		logger.info("mesto " + getProject().property("mesto") );
 
 	}
 	
