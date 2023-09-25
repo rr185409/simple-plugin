@@ -106,12 +106,15 @@ artifactory {
             maven = true
             
         }
-def pp =""
+	def pp =""
 println pp+"PluginMarkerMaven"
         defaults {
-			        
+			        if(project.hasProperty("pluginName")) {
+			        	 pp = project.property("pluginName")
+			        	println pp+"PluginMarkerMaven"
+			        }
             publications(
-           "SimplePluginMarkerMaven",
+           pp+"PluginMarkerMaven",
             "buildMaven")
             publishBuildInfo = false
 
