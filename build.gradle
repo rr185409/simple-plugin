@@ -107,7 +107,7 @@ artifactory {
             
         }
 	def pp =""
-println pp+"PluginMarkerMaven"
+
         defaults {
 			        if(project.hasProperty("pluginName")) {
 			        	 pp = project.property("pluginName")+"PluginMarkerMaven"
