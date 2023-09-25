@@ -11,8 +11,6 @@ public class AppPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		System.out.println("apply");
-		project.getTasks().register("projectName", SimpleOperationsTask.class);
 	}
 
 }

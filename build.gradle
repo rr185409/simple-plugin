@@ -80,7 +80,7 @@ gradlePlugin {
             implementationClass = 'com.ncr.plugins.SimplePlugin'
 		}
 		App {
-            id = 'com.ncr.plugins.test'
+            id = 'com.ncr.plugins.app'
             implementationClass = 'com.ncr.plugins.AppPlugin'
 		}
 	}
