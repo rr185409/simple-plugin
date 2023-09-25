@@ -42,20 +42,22 @@ def depend = ""
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-			def pluginName = ""
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    
+    		def pluginName = ""
 			if(project.hasProperty("pluginName")) {
 				
 				if(dependencyMap[project.property("pluginName")]){
 					depend = dependencyMap[project.property("pluginName")]
 					implementation depend
+				} else {
+					println "There is no adding dependency"
 				}
 				
 				
 			} else {
 				println "There is no pluginName"
 			}
-    implementation 'com.google.guava:guava:30.1.1-jre'
-    
 }
 
 application {
@@ -116,12 +118,12 @@ artifactory {
             maven = true
             
         }
-	def marker =""
-
+        
+		def marker =""
         defaults {
 			        if(project.hasProperty("pluginName")) {
-			        	 marker = project.property("pluginName")+"PluginMarkerMaven"
-			        	println marker
+						marker = project.property("pluginName")+"PluginMarkerMaven"
+						println marker
 			        }
 			        
             publications(
