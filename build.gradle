@@ -83,6 +83,10 @@ gradlePlugin {
             id = 'com.ncr.plugins.app'
             implementationClass = 'com.ncr.plugins.AppPlugin'
 		}
+		AppNoDep {
+            id = 'com.ncr.plugins.appnodep'
+            implementationClass = 'com.ncr.plugins.AppNoDepPlugin'
+		}
 	}
 }
 
@@ -122,6 +126,7 @@ artifactory {
 			        	 marker = project.property("pluginName")+"PluginMarkerMaven"
 			        	println marker
 			        }
+			        
             publications(
            	marker,
             "buildMaven")
