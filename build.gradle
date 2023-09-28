@@ -21,6 +21,8 @@ plugins {
     id "com.jfrog.artifactory" version "4.24.18"
      id 'java-gradle-plugin'
      id  "nebula.release" version "16.0.0"
+     
+  	id "com.dorongold.task-tree" version "2.1.0"
 }
 group = "com.ncr"
 
@@ -43,7 +45,7 @@ dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     implementation 'com.google.guava:guava:30.1.1-jre'
-    
+    implementation "com.dorongold.plugins:task-tree:2.1.0"
     		def pluginName = ""
 			if(project.hasProperty("pluginName")) {
 				
