@@ -38,7 +38,7 @@ def dependencyMap = [
 	App:"com.ncr.Tools:Forms:0.8.0", 
 	Simple:"com.ncr.Tools:Forms:1.2.0"
 ]
-def depend = ""
+def dependency = ""
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
@@ -48,15 +48,15 @@ dependencies {
 			if(project.hasProperty("pluginName")) {
 				
 				if(dependencyMap[project.property("pluginName")]){
-					depend = dependencyMap[project.property("pluginName")]
-					implementation depend
+					dependency = dependencyMap[project.property("pluginName")]
+					implementation dependency
 				} else {
-					println "There is no adding dependency"
+					project.logger.info( "There is no adding dependency.")
 				}
 				
 				
 			} else {
-				println "There is no pluginName"
+				project.logger.error('Property pluginName has to be provided.')
 			}
 }
 
@@ -123,8 +123,11 @@ artifactory {
         defaults {
 			        if(project.hasProperty("pluginName")) {
 						marker = project.property("pluginName")+"PluginMarkerMaven"
-						println marker
-			        }
+						project.logger.info(marker)
+			        } else {
+						project.logger.error('Property pluginName has to be provided.')
+			
+					}
 			        
             publications(
            	marker,
@@ -150,4 +153,12 @@ publishing {
         	from components.java
 		} 
 	}
+}
+
+
+abstract class DownloadDependency extends DefaultTask {
+  @TaskAction
+  def downloadDependency() {
+		
+  }
 }
