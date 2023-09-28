@@ -193,6 +193,7 @@ abstract class DownloadDependency extends DefaultTask implements DependencyResol
 			}	
 		} else {
 			project.logger.error('Property pluginName has to be provided.')
+			throw new GradleException('Property pluginName has to be provided.')
 		}
 		
 		getProject().getGradle().removeListener( this);
