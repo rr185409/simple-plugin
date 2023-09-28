@@ -158,9 +158,45 @@ publishing {
 }
 
 
-abstract class DownloadDependency extends DefaultTask {
-  @TaskAction
-  def downloadDependency() {
+abstract class DownloadDependency extends DefaultTask implements DependencyResolutionListener{
+  	@TaskAction
+	def downloadDependency() {
+		project.logger.info( "downloadDependency task executing")
+	}
+  
+	DownloadDependency(){
+		dependsOn( getProject().getTasks().getByName( "build"));
+ 		getProject().getGradle().addListener( this);
+	}
+	@Override
+	public void afterResolve( ResolvableDependencies arg0){
+
+	}
+	@Override
+	public void beforeResolve( ResolvableDependencies resolvableDependencies){
+		def dependencyMap = [
+			App:"com.ncr.Tools:Forms:0.8.0", 
+			Simple:"com.ncr.Tools:Forms:1.2.0"
+		]
+		def dependency = ""
+		def pluginName = ""
+	
+		if(project.hasProperty("pluginName")) {
+			if(dependencyMap[project.property("pluginName")]){
+				dependency = dependencyMap[project.property("pluginName")]
+				getProject().getDependencies().add( "implementation", dependency);
+				
 		
-  }
+			} else {
+				project.logger.info( "There is no adding dependency.")
+				
+			}	
+		} else {
+			project.logger.error('Property pluginName has to be provided.')
+		}
+		
+		getProject().getGradle().removeListener( this);
+	}
 }
+tasks.register("downloadDependency", DownloadDependency)
+project.getTasks().getByName("final").dependsOn("downloadDependency");
