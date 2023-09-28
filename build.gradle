@@ -40,26 +40,13 @@ def dependencyMap = [
 	App:"com.ncr.Tools:Forms:0.8.0", 
 	Simple:"com.ncr.Tools:Forms:1.2.0"
 ]
-def dependency = ""
+
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation "com.dorongold.plugins:task-tree:2.1.0"
-    		def pluginName = ""
-			if(project.hasProperty("pluginName")) {
-				
-				if(dependencyMap[project.property("pluginName")]){
-					dependency = dependencyMap[project.property("pluginName")]
-					implementation dependency
-				} else {
-					project.logger.info( "There is no adding dependency.")
-				}
-				
-				
-			} else {
-				project.logger.error('Property pluginName has to be provided.')
-			}
+
 }
 
 application {
@@ -112,32 +99,29 @@ repositories {
 artifactory {
     contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
 
-    publish {
-     repository {
-            repoKey = 'tcs-demo-gradle-public'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-            maven = true
-            
-        }
-        
+	publish {
+		repository {
+			repoKey = 'tcs-demo-gradle-public'
+			username = "${artifactory_user}"
+			password = "${artifactory_password}"
+			maven = true
+		}
+		
 		def marker =""
-        defaults {
-			        if(project.hasProperty("pluginName")) {
-						marker = project.property("pluginName")+"PluginMarkerMaven"
-						project.logger.info(marker)
-			        } else {
-						project.logger.error('Property pluginName has to be provided.')
-			
-					}
+		defaults {
+			if(project.hasProperty("pluginName")) {
+				marker = project.property("pluginName")+"PluginMarkerMaven"
+					project.logger.info(marker)
+			} else {
+				project.logger.error('Property pluginName has to be provided. pub logger')
+			}
 			        
-            publications(
-           	marker,
-            "buildMaven")
-            publishBuildInfo = false
-
-        }
-    }
+			publications(
+				marker,
+				"buildMaven")
+			publishBuildInfo = false
+		}
+	}
     resolve {
         repository {
             repoKey = 'tcs-demo-gradle-public'
@@ -158,45 +142,34 @@ publishing {
 }
 
 
-abstract class DownloadDependency extends DefaultTask implements DependencyResolutionListener{
+abstract class DownloadDependency extends DefaultTask{
   	@TaskAction
 	def downloadDependency() {
 		project.logger.info( "downloadDependency task executing")
 	}
   
 	DownloadDependency(){
-		dependsOn( getProject().getTasks().getByName( "build"));
- 		getProject().getGradle().addListener( this);
-	}
-	@Override
-	public void afterResolve( ResolvableDependencies arg0){
-
-	}
-	@Override
-	public void beforeResolve( ResolvableDependencies resolvableDependencies){
+		dependsOn( project.getTasks().getByName( "build"));
 		def dependencyMap = [
 			App:"com.ncr.Tools:Forms:0.8.0", 
 			Simple:"com.ncr.Tools:Forms:1.2.0"
 		]
+		
 		def dependency = ""
-		def pluginName = ""
-	
+		
 		if(project.hasProperty("pluginName")) {
 			if(dependencyMap[project.property("pluginName")]){
 				dependency = dependencyMap[project.property("pluginName")]
-				getProject().getDependencies().add( "implementation", dependency);
-				
-		
+				project.getDependencies().add( "implementation", dependency);		
 			} else {
-				project.logger.info( "There is no adding dependency.")
-				
+				project.logger.info( "There is no adding dependency.")	
 			}	
 		} else {
-			project.logger.error('Property pluginName has to be provided.')
+			project.logger.error('Property pluginName has to be provided. logger')
 			throw new GradleException('Property pluginName has to be provided.')
-		}
-		
-		getProject().getGradle().removeListener( this);
+			
+		} 	
+	
 	}
 }
 tasks.register("downloadDependency", DownloadDependency)
