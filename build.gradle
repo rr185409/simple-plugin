@@ -5,6 +5,12 @@
  * For more details take a look at the 'Building Java & JVM projects' chapter in the Gradle
  * User Manual available at https://docs.gradle.org/7.2/userguide/building_java_projects.html
  */
+ 
+ 
+ 
+import org.jfrog.gradle.plugin.artifactory.ArtifactoryPluginUtil;
+
+
 buildscript {
    
     dependencies {
@@ -36,17 +42,13 @@ repositories {
      gradlePluginPortal()
 }
 
-def dependencyMap = [
-	App:"com.ncr.Tools:Forms:0.8.0", 
-	Simple:"com.ncr.Tools:Forms:1.2.0"
-]
-def dependency = ""
+
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation "com.dorongold.plugins:task-tree:2.1.0"
-    		def pluginName = ""
+    	/*	def pluginName = ""
 			if(project.hasProperty("pluginName")) {
 				
 				if(dependencyMap[project.property("pluginName")]){
@@ -59,7 +61,7 @@ dependencies {
 				
 			} else {
 				project.logger.error('Property pluginName has to be provided.')
-			}
+			}*/
 }
 
 application {
@@ -121,18 +123,12 @@ artifactory {
             
         }
         
-		def marker =""
+		
         defaults {
-			        if(project.hasProperty("pluginName")) {
-						marker = project.property("pluginName")+"PluginMarkerMaven"
-						project.logger.info(marker)
-			        } else {
-						project.logger.error('Property pluginName has to be provided.')
-			
-					}
+			       
 			        
             publications(
-           	marker,
+          	
             "buildMaven")
             publishBuildInfo = false
 
@@ -158,9 +154,58 @@ publishing {
 }
 
 
-abstract class DownloadDependency extends DefaultTask {
-  @TaskAction
-  def downloadDependency() {
+abstract class DownloadDependency extends DefaultTask implements DependencyResolutionListener{
+	@TaskAction
+		def downloadDependency() {
+			project.logger.info( "downloadDependency task executing")
+		}
+  
+	DownloadDependency(){
+		dependsOn( getProject().getTasks().getByName( "build"));
+ 		getProject().getGradle().addListener( this);
+	}
+	@Override
+	public void afterResolve( ResolvableDependencies arg0){
+
+	}
+	@Override
+	public void beforeResolve( ResolvableDependencies resolvableDependencies){
+		def dependencyMap = [
+			App:"com.ncr.Tools:Forms:0.8.0", 
+			Simple:"com.ncr.Tools:Forms:1.2.0"
+		]
+		def dependency = ""
+		def pluginName = ""
+		def marker = ""
+		if(project.hasProperty("pluginName")) {
+			if(dependencyMap[project.property("pluginName")]){
+				dependency = dependencyMap[project.property("pluginName")]
+				getProject().getDependencies().add( "implementation", dependency);
+				marker = project.property("pluginName")+"PluginMarkerMaven"
+				project.logger.info(marker)
+				ArtifactoryPluginUtil.getArtifactoryConvention(project).artifactory((artifactory) -> {
+			
+
+			artifactory.publish((publish) -> {
+				
+				publish.defaults((d) -> {
+					logger.info(">>Publications: " + getPublications(project));
+					d.publications(marker);
+				});
+
+			});
+
+		});
+			} else {
+				project.logger.info( "There is no adding dependency.")
+				
+			}	
+		} else {
+			project.logger.error('Property pluginName has to be provided.')
+			throw new GradleException('Property pluginName has to be provided.')
+		}
 		
-  }
+		getProject().getGradle().removeListener( this);
+	}
 }
+tasks.register("downloadDependency", DownloadDependency)
