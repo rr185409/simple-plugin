@@ -155,16 +155,26 @@ abstract class CheckPluginName extends DefaultTask{
 	}
 }
 tasks.register("checkPluginName", CheckPluginName)
-abstract class DownloadDependency extends DefaultTask{
+abstract class AddDependency extends DefaultTask implements DependencyResolutionListener{
   	@TaskAction
-	def downloadDependency() {
-		project.logger.info( "downloadDependency task executing")
+	def addDependency() {
+		project.logger.info( "addDependency task executing")
 	}
   
-	DownloadDependency(){
+	AddDependency(){
 		dependsOn( project.getTasks().getByName( "checkPluginName"));
-		dependsOn( project.getTasks().getByName( "build"));
+		dependsOn( project.getTasks().getByName( "final"));
+		project.getTasks().getByName( "final").mustRunAfter(project.getTasks().getByName("checkPluginName"))
+ 		getProject().getGradle().addListener( this);
 		
+		
+	}
+	@Override
+	public void afterResolve( ResolvableDependencies arg0){
+
+	}
+	@Override
+	public void beforeResolve( ResolvableDependencies resolvableDependencies){
 		def dependencyMap = [
 			App:"com.ncr.Tools:Forms:0.8.0", 
 			Simple:"com.ncr.Tools:Forms:1.2.0"
@@ -177,8 +187,8 @@ abstract class DownloadDependency extends DefaultTask{
 		} else {		
 			project.logger.info( "There is no adding dependency.")	
 		}	
+		
+		getProject().getGradle().removeListener( this);
 	}
 }
-tasks.register("downloadDependency", DownloadDependency)
-
-project.getTasks().getByName( "final").dependsOn(downloadDependency)
+tasks.register("addDependency", AddDependency)
