@@ -141,7 +141,8 @@ abstract class CheckPluginName extends DefaultTask{
 	def checkPluginName() {
 		project.logger.info("checkPluginName executing")
 		if(!hasPluginName()) {
-			project.logger.info("Example: ./gradlew final -PpluginName=JavaBase")
+			project.logger.error("Example error: ./gradlew final -PpluginName=JavaBase")
+			project.logger.info("Example info: ./gradlew final -PpluginName=JavaBase")
 			throw new GradleException('Property pluginName has to be provided.')
 		} 
 		return true
