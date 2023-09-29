@@ -170,7 +170,7 @@ abstract class AddDependency extends DefaultTask implements DependencyResolution
 	AddDependency(){
 		dependsOn( project.getTasks().getByName( "checkPluginName"));
 		dependsOn( project.getTasks().getByName( "build"));
-	//	project.getTasks().getByName( "final").mustRunAfter(project.getTasks().getByName("checkPluginName"))
+		project.getTasks().getByName( "build").mustRunAfter(project.getTasks().getByName("checkPluginName"))
 		
  		project.getGradle().addListener(this);  
 		   
