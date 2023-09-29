@@ -36,11 +36,6 @@ repositories {
      gradlePluginPortal()
 }
 
-def dependencyMap = [
-	App:"com.ncr.Tools:Forms:0.8.0", 
-	Simple:"com.ncr.Tools:Forms:1.2.0"
-]
-
 dependencies {
     // Use JUnit Jupiter for testing.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
@@ -111,9 +106,7 @@ artifactory {
 		defaults {
 			if(project.hasProperty("pluginName")) {
 				marker = project.property("pluginName")+"PluginMarkerMaven"
-					project.logger.info(marker)
-			} else {
-				project.logger.error('Property pluginName has to be provided. pub logger')
+				project.logger.info(marker)
 			}
 			        
 			publications(
@@ -141,7 +134,27 @@ publishing {
 	}
 }
 
-
+abstract class CheckPluginName extends DefaultTask{
+  	@TaskAction
+	def checkPluginName() {
+		project.logger.info("checkPluginName executing")
+		if(!hasPluginName()) {
+			throw new GradleException('Property pluginName has to be provided.')
+		} 
+		return true
+	}
+  
+	def hasPluginName(){
+		if(project.hasProperty("pluginName")) {
+			project.logger.info("hasPluginName true ")
+			return true
+		} else {
+			project.logger.info("hasPluginName false ")
+			return false
+		}
+	}
+}
+tasks.register("checkPluginName", CheckPluginName)
 abstract class DownloadDependency extends DefaultTask{
   	@TaskAction
 	def downloadDependency() {
@@ -149,28 +162,23 @@ abstract class DownloadDependency extends DefaultTask{
 	}
   
 	DownloadDependency(){
+		dependsOn( project.getTasks().getByName( "checkPluginName"));
 		dependsOn( project.getTasks().getByName( "build"));
+		
 		def dependencyMap = [
 			App:"com.ncr.Tools:Forms:0.8.0", 
 			Simple:"com.ncr.Tools:Forms:1.2.0"
 		]
 		
 		def dependency = ""
-		
-		if(project.hasProperty("pluginName")) {
-			if(dependencyMap[project.property("pluginName")]){
-				dependency = dependencyMap[project.property("pluginName")]
-				project.getDependencies().add( "implementation", dependency);		
-			} else {
-				project.logger.info( "There is no adding dependency.")	
-			}	
-		} else {
-			project.logger.error('Property pluginName has to be provided. logger')
-			throw new GradleException('Property pluginName has to be provided.')
-			
-		} 	
-	
+		if(project.hasProperty("pluginName") && dependencyMap[project.property("pluginName")]){
+			dependency = dependencyMap[project.property("pluginName")]
+			project.getDependencies().add( "implementation", dependency);		
+		} else {		
+			project.logger.info( "There is no adding dependency.")	
+		}	
 	}
 }
 tasks.register("downloadDependency", DownloadDependency)
-project.getTasks().getByName("final").dependsOn("downloadDependency");
+
+project.getTasks().getByName( "final").dependsOn(downloadDependency)
