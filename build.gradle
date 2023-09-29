@@ -161,7 +161,7 @@ tasks.register("checkPluginName", CheckPluginName)
 import org.ajoberstar.grgit.Grgit
 import org.ajoberstar.grgit.Status
 
-abstract class AddDependency extends DefaultTask implements DependencyResolutionListener{
+abstract class AddDependency extends DefaultTask{
   	@TaskAction
 	def addDependency() {
 		project.logger.info( ">>>>>>addDependency task executing")
@@ -171,16 +171,6 @@ abstract class AddDependency extends DefaultTask implements DependencyResolution
 		dependsOn( project.getTasks().getByName( "checkPluginName"));
 		dependsOn( project.getTasks().getByName( "build"));
 		project.getTasks().getByName( "build").mustRunAfter(project.getTasks().getByName("checkPluginName"))
-		
- 		project.getGradle().addListener(this);  
-		   
-		
-	}
-	@Override
-	public void afterResolve( ResolvableDependencies arg0){
-	}
-	@Override
-	public void beforeResolve( ResolvableDependencies resolvableDependencies){
 		def dependencyMap = [
 			App:"com.ncr.Tools:Forms:0.8.0", 
 			Simple:"com.ncr.Tools:Forms:1.2.0"
@@ -193,9 +183,11 @@ abstract class AddDependency extends DefaultTask implements DependencyResolution
 		} else {		
 			project.logger.info( "There is no adding dependency.")	
 		}	
+ 		
+		   
 		
-		project.getGradle().removeListener( this);
 	}
+	
 }
 tasks.register("addDependency", AddDependency)
 project.getTasks().getByName( "final").dependsOn(addDependency)
