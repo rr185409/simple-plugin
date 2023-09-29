@@ -41,6 +41,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation "com.dorongold.plugins:task-tree:2.1.0"
+     implementation "com.netflix.nebula:nebula-release-plugin:16.0.0"
+     implementation "org.ajoberstar.grgit:grgit-gradle:4.1.1"
 
 }
 
@@ -155,18 +157,26 @@ abstract class CheckPluginName extends DefaultTask{
 	}
 }
 tasks.register("checkPluginName", CheckPluginName)
+
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Status
+
 abstract class AddDependency extends DefaultTask implements DependencyResolutionListener{
   	@TaskAction
 	def addDependency() {
-		project.logger.info( ">>>>>>>>>>>addDependency task executing")
+		project.logger.info( ">>>>>>addDependency task executing")
 	}
   
 	AddDependency(){
 		dependsOn( project.getTasks().getByName( "checkPluginName"));
-		dependsOn( project.getTasks().getByName( "final"));
-		project.getTasks().getByName( "final").mustRunAfter(project.getTasks().getByName("checkPluginName"))
+		dependsOn( project.getTasks().getByName( "build"));
+		project.getTasks().getByName( "build").mustRunAfter(project.getTasks().getByName("checkPluginName"))
+		def gitRoot = project.rootProject.projectDir
+		Grgit git = Grgit.open(dir: gitRoot)
+		Status status = git.status()
+		project.logger.info( ">>>>OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO>>addDependency task executing" + status.isClean())
  		project.getGradle().addListener(this);  
-		
+		   
 		
 	}
 	@Override
