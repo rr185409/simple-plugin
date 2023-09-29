@@ -164,14 +164,13 @@ import org.ajoberstar.grgit.Status
 abstract class AddDependency extends DefaultTask implements DependencyResolutionListener{
   	@TaskAction
 	def addDependency() {
-		project.logger.info( ">>>>>>addDependency task executing " +project.gradle.startParameter.taskNames)
+		project.logger.info( ">>>>>>addDependency task executing")
 	}
   
 	AddDependency(){
 		dependsOn( project.getTasks().getByName( "checkPluginName"));
-		dependsOn( project.getTasks().getByName( "final"));
-		project.getTasks().getByName( "final").mustRunAfter(project.getTasks().getByName("checkPluginName"))
-				project.logger.error( ">OOOOOOOOOOOOOOOOOOOOO>>>>>addDependency task executing " +project.gradle.startParameter.taskNames)
+		dependsOn( project.getTasks().getByName( "build"));
+	//	project.getTasks().getByName( "final").mustRunAfter(project.getTasks().getByName("checkPluginName"))
 		
  		project.getGradle().addListener(this);  
 		   
@@ -199,3 +198,4 @@ abstract class AddDependency extends DefaultTask implements DependencyResolution
 	}
 }
 tasks.register("addDependency", AddDependency)
+project.getTasks().getByName( "final").dependsOn(addDependency)
